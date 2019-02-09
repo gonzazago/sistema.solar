@@ -11,7 +11,7 @@
 	<groupId>com.examen.ingreso.meli</groupId>
 	<artifactId>sistema.solar</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>sistema.solar</name>
 	<description>Proyecto Ingreso MELI</description>
 
