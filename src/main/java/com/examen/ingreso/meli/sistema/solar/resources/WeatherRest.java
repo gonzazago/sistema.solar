@@ -46,17 +46,17 @@ public class WeatherRest {
  public ResponseEntity<WeatherDayDTO> getWeatherInfoForDay(@ApiParam(value = "Number of days to be calculated", allowableValues = "range[1,infinity]", required = true)
          @PathVariable("day")Long day) throws DayNotFoundException {
 
-     final WeatherDayDTO weatherDayDTO = null;
 
      if(day < 1){
          throw new IllegalArgumentException("the value entered must be greater than 1 ");
      }
 
-     return weatherService.getWeatherForDay(day).map(
+   return  weatherService.getWeatherForDay(day).map(
              weather -> {
-                 weatherDayDTO.setDay(weather.getDay());
-                 weatherDayDTO.setDesc(weather.getWeatherType());
-                 return ResponseEntity.ok(weatherDayDTO);
+                 WeatherDayDTO w = new WeatherDayDTO();
+                 w.setDay(weather.getDay());
+                 w.setDesc(weather.getWeatherType());
+                 return ResponseEntity.ok(w);
              }
      ).orElseThrow(() -> new DayNotFoundException());
  }

@@ -115,6 +115,7 @@ public class WeatherServiceImple implements WeatherService {
 
     @Override
     public Optional<Weather> getWeatherForDay(Long day) {
+        
         return weatherRepository.findById(day);
     }
 
