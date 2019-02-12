@@ -1,39 +1,27 @@
 package com.examen.ingreso.meli.sistema.solar.resources;
 
-
-import com.examen.ingreso.meli.sistema.solar.entities.Planet;
-import com.examen.ingreso.meli.sistema.solar.factory.PlanetFactory;
-import com.examen.ingreso.meli.sistema.solar.repository.WeatherRepository;
-import com.examen.ingreso.meli.sistema.solar.resources.ExceptionRest.ApiRestException;
 import com.examen.ingreso.meli.sistema.solar.resources.ExceptionRest.DayNotFoundException;
 import com.examen.ingreso.meli.sistema.solar.resources.dto.WeatherDayDTO;
-import com.examen.ingreso.meli.sistema.solar.resources.dto.WeatherInfoDTO;
 import com.examen.ingreso.meli.sistema.solar.services.WeatherService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController()
 @RequestMapping("/api")
 public class WeatherRest {
-
+    private final Logger log = LoggerFactory.getLogger(WeatherRest.class);
  @Autowired
     WeatherService weatherService;
-
-    Planet ferengui = PlanetFactory.createPlanet("Ferengui",2.00,true,1000.00);
-    Planet  vulcano = PlanetFactory.createPlanet("Vulcano",2.00,true,1000.00);
-    Planet betasoide = PlanetFactory.createPlanet("Betasoide",-2.00,false,1000.00);
-
-    List<Planet> planets = new ArrayList<>(Arrays.asList(ferengui,vulcano,betasoide));
-
 
     @ApiOperation(notes ="Return the Weather Info for day specific ",
             value = "Consult the Weather info for day specific",
@@ -44,21 +32,26 @@ public class WeatherRest {
     })
  @GetMapping("/weathers/{day}")
  public ResponseEntity<WeatherDayDTO> getWeatherInfoForDay(@ApiParam(value = "Number of days to be calculated", allowableValues = "range[1,infinity]", required = true)
-         @PathVariable("day")Long day) throws DayNotFoundException {
-
-
+         @PathVariable("day")Long day) throws Exception {
+        log.info("Init method getWeathrtInfoForDay");
      if(day < 1){
          throw new IllegalArgumentException("the value entered must be greater than 1 ");
      }
+     try {
+         return  weatherService.getWeatherForDay(day).map(
+                 weather -> {
+                     WeatherDayDTO w = new WeatherDayDTO();
+                     w.setDay(weather.getDay());
+                     w.setDesc(weather.getWeatherType());
+                     return ResponseEntity.ok(w);
+                 }
+         ).orElseThrow(() -> new DayNotFoundException());
+     }catch (Exception e){
+         log.error("Error ocurred in method getWeatherInfoForDay",e);
+         throw  new Exception();
+     }
 
-   return  weatherService.getWeatherForDay(day).map(
-             weather -> {
-                 WeatherDayDTO w = new WeatherDayDTO();
-                 w.setDay(weather.getDay());
-                 w.setDesc(weather.getWeatherType());
-                 return ResponseEntity.ok(w);
-             }
-     ).orElseThrow(() -> new DayNotFoundException());
+
  }
 
 
