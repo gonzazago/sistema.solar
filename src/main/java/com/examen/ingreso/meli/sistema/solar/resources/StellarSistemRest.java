@@ -10,6 +10,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,7 @@ import java.util.List;
 @RequestMapping("/api")
 public class StellarSistemRest {
 
+    private final  Logger log = LoggerFactory.getLogger(StellarSistemRest.class);
 
     @Autowired
     StellarSolarService stellarSolarService;
@@ -43,12 +46,19 @@ public class StellarSistemRest {
     @GetMapping("/stellar-sollar/{days}")
     public ResponseEntity<WeatherInfoDTO> simulateDays(@ApiParam(value = "Number of days to be calculated", allowableValues = "range[1,infinity]", required = true)
                                                            @PathVariable("days") Integer day) throws Exception{
+        log.info("init simulateDays");
         if(day < 1  || day > 3600){
             throw new IllegalArgumentException("La cantidad de dias debe ser mayor a 1 y menor a 10 años");
         }
-        StellarSistem stellarSistem = new StellarSistem(planets);
-        WeatherInfoDTO infoDTO=stellarSolarService.simulateAfterDays(stellarSistem,day);
-        return  ResponseEntity.ok(infoDTO);
+        try {
+            StellarSistem stellarSistem = new StellarSistem(planets);
+            WeatherInfoDTO infoDTO=stellarSolarService.simulateAfterDays(stellarSistem,day);
+            return  ResponseEntity.ok(infoDTO);
+        }catch (Exception e){
+            log.error("Error ocurred in resource StellarSistemRest", e);
+            throw new Exception();
+        }
+
     }
 
 

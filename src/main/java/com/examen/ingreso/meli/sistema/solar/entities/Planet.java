@@ -25,16 +25,6 @@ public  class Planet {
         this.angule = 90.00;
     }
 
-/*
-    public void setPosition(){
-        this.position = CalcUtils.transformFromPolarToCartesian(
-                new PolarCordenate(this.distance,Math.toRadians(this.getAngule())));
-    }
-
-    public void  setAngule(Integer days){
-        this.angule = CalcUtils.getAngule(this,days);
-    }*/
-
     public void simulateAfterDay(Integer days){
         this.angule = CalcUtils.getAngule(this,days);
         this.position = CalcUtils.transformFromPolarToCartesian(new PolarCordenate(

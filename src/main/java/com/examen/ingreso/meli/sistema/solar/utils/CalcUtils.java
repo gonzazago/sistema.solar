@@ -2,12 +2,16 @@ package com.examen.ingreso.meli.sistema.solar.utils;
 
 import com.examen.ingreso.meli.sistema.solar.entities.Planet;
 import com.examen.ingreso.meli.sistema.solar.entities.PolarCordenate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.geom.Point2D;
 import java.util.function.Function;
 
 
 public class CalcUtils {
+
+    private final static Logger log = LoggerFactory.getLogger(CalcUtils.class);
 
     public static Point2D transformFromPolarToCartesian(PolarCordenate p1){
         Double angularRadians = p1.getAnguleInRadian();
@@ -33,7 +37,7 @@ public class CalcUtils {
     }
 
     /**
-     * Verifica que dos puntos pasado como parametros en Coordenada polar esten alineados entre si
+     * Verifica que dados 3 puntos estos pertenezcan a la misma recta
      * @Input PolarCordenate p1 ,PolarCorednate p2
      * @return boolean*/
     public  static  boolean isAlingPlanetsAndSun(Point2D p1, Point2D p2, Point2D p3){
@@ -42,15 +46,21 @@ public class CalcUtils {
                 || (p1.getY() == p2.getY() && p2.getY() == p3.getY() && p1.getY() != 0.0)){
             return true;
         }
+        try{
             Double delX = p2.getX() - p1.getX();
             Double delY = p2.getY() - p1.getY();
 
             Double slope = delY / delX;
 
             Double independent = p2.getY() - (slope * p1.getY());
-        Function<Double,Double> rec = x -> (slope * x) + independent;
+            Function<Double,Double> rec = x -> (slope * x) + independent;
 
-        return  rec.apply(p3.getX()) == p3.getY() && rec.apply(0.0) != 0.0;
+            return  rec.apply(p3.getX()) == p3.getY() && rec.apply(0.0) != 0.0;
+        }catch (Exception e){
+            log.error("Error ocurred in method isAlingPlanetsAndSun" , e);
+            return false;
+        }
+
     }
 
 
