@@ -2,7 +2,9 @@ package com.examen.ingreso.meli.sistema.solar.utils;
 
 import com.examen.ingreso.meli.sistema.solar.entities.Planet;
 import com.examen.ingreso.meli.sistema.solar.entities.PolarCordenate;
+
 import java.awt.geom.Point2D;
+import java.util.function.Function;
 
 
 public class CalcUtils {
@@ -34,17 +36,21 @@ public class CalcUtils {
      * Verifica que dos puntos pasado como parametros en Coordenada polar esten alineados entre si
      * @Input PolarCordenate p1 ,PolarCorednate p2
      * @return boolean*/
-    public  static  boolean isAlingPlanetsAndSun(PolarCordenate p1, PolarCordenate p2){
-        if(p2.getAnguleInRadian().equals(0.00) && p1.getAnguleInRadian().equals(0.00)){
+    public  static  boolean isAlingPlanetsAndSun(Point2D p1, Point2D p2, Point2D p3){
+
+        if( (p1.getX() == p2.getX() && p2.getX() == p3.getX() && p1.getX() != 0.0)
+                || (p1.getY() == p2.getY() && p2.getY() == p3.getY() && p1.getY() != 0.0)){
             return true;
         }
+            Double delX = p2.getX() - p1.getX();
+            Double delY = p2.getY() - p1.getY();
 
-        if( p2.getAnguleInRadian().equals(0D)){
-            return p2.getAnguleInRadian()%p1.getAnguleInRadian() == 0;
-        }else {
-            return p1.getAnguleInRadian()%p2.getAnguleInRadian() == 0;
-        }
+            Double slope = delY / delX;
 
+            Double independent = p2.getY() - (slope * p1.getY());
+        Function<Double,Double> rec = x -> (slope * x) + independent;
+
+        return  rec.apply(p3.getX()) == p3.getY() && rec.apply(0.0) != 0.0;
     }
 
 

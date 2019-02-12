@@ -1,6 +1,5 @@
 package com.examen.ingreso.meli.sistema.solar;
 
-import com.examen.ingreso.meli.sistema.solar.entities.PolarCordenate;
 import com.examen.ingreso.meli.sistema.solar.utils.CalcUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -59,16 +58,15 @@ public class CalcUtilsTest {
 
     @Test
     public void planetsAlingWithSun(){
-        PolarCordenate p1 = new PolarCordenate(500.00,Math.toRadians(90.00));
-        PolarCordenate p2 = new PolarCordenate(2000.00,Math.toRadians(90.00));
-        PolarCordenate p3 = new PolarCordenate(1000.00,Math.toRadians(270.00));
-        PolarCordenate sunP = new PolarCordenate(0.00,Math.toRadians(0.00));
+        Point2D p1 = new Point2D.Double(500.00,0.00);
+        Point2D p2 = new Point2D.Double(2000.00,0.0);
+        Point2D p3 = new Point2D.Double(1000.00,0.00);
 
-        boolean p1p2 = CalcUtils.isAlingPlanetsAndSun(p2,p1);
-        boolean p2p3 = CalcUtils.isAlingPlanetsAndSun(p3,p1);
-        boolean p1SunP = CalcUtils.isAlingPlanetsAndSun(p1,sunP);
 
-        Assert.assertTrue(p1p2 && p2p3 && p1SunP);
+
+        boolean p1p2 = CalcUtils.isAlingPlanetsAndSun(p1,p2,p3);
+
+        Assert.assertFalse(p1p2);
     }
 
 

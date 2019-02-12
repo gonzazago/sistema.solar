@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class WeatherInfoDTO {
 
-    private Long maxPeriodRain;
+    private Long countPeriodsRainy;
     private Long countDroughtPeriods;
     private Long countSunnPeriods;
     private Integer dayMaxOfRainy;

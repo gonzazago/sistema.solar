@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: solar-sistem
+
+#configuration Hibernate-JPA
+  datasource:
+    url: jdbc:postgresql://ec2-107-22-238-186.compute-1.amazonaws.com:5432/dejcbo4514cnph?user=bfgxfqgoeztqft&password=8874e457ea0ac6c06bbd8a1c14f354666eccfac7dad04e33f7104bf722263446&sslmode=require
+    username: ${user.db}
+    password: ${user.db.password}
+  jpa:
+    database: postgresql
+    show-sql: false
+    hibernate:
+      ddl-auto: update

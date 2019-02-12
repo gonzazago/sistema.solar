@@ -1,11 +1,12 @@
 package com.examen.ingreso.meli.sistema.solar.services.Imple;
 
-import com.examen.ingreso.meli.sistema.solar.entities.*;
+import com.examen.ingreso.meli.sistema.solar.entities.Planet;
+import com.examen.ingreso.meli.sistema.solar.entities.Weather;
+import com.examen.ingreso.meli.sistema.solar.entities.WeatherTypes;
 import com.examen.ingreso.meli.sistema.solar.repository.WeatherRepository;
 import com.examen.ingreso.meli.sistema.solar.resources.dto.WeatherInfoDTO;
 import com.examen.ingreso.meli.sistema.solar.services.PlanetService;
 import com.examen.ingreso.meli.sistema.solar.services.WeatherService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,21 +46,25 @@ public class WeatherServiceImple implements WeatherService {
                  switch (weatherType){
 
                      case SUN:
+                         weather.setDayOfPeriod(i);
                          weather.setAmountRainy(0.00);
                          weather.setWeatherType(WeatherTypes.SUNNY.getWeatherType());
                          weatherRepository.save(weather);
                          break;
                      case DROUGHT:
+                         weather.setDayOfPeriod(i);
                          weather.setAmountRainy(0.00);
                          weather.setWeatherType(WeatherTypes.DROUGHT.getWeatherType());
                          weatherRepository.save(weather);
                          break;
                      case RAIN:
+                         weather.setDayOfPeriod(i);
                          weather.setAmountRainy(planetService.calculatePeriodRainy(planets.get(0),planets.get(1),planets.get(2)));
                          weather.setWeatherType(WeatherTypes.RAIN.getWeatherType());
                          weatherRepository.save(weather);
                          break;
                      default:
+                         weather.setDayOfPeriod(i);
                          weather.setAmountRainy(0.00);
                          weather.setWeatherType(WeatherTypes.UNKNOWN.getWeatherType());
                          weatherRepository.save(weather);
@@ -79,7 +84,7 @@ public class WeatherServiceImple implements WeatherService {
              dayMax = maxPeriodRain.stream()
                     .max(Comparator.comparing(Weather::getAmountRainy))
                     .get()
-                    .getDay().intValue();
+                    .getDayOfPeriod();
         }
 
 
@@ -88,7 +93,6 @@ public class WeatherServiceImple implements WeatherService {
                 .collect(
                         Collectors.groupingBy(Weather::getWeatherType, Collectors.counting())
                 );
-        System.out.println(groupByWeather);
         WeatherInfoDTO weatherInfoDTO = new WeatherInfoDTO();
         Long periodsSun = Long.valueOf(0) ;
         Long periodsDrought = Long.valueOf(0);
@@ -107,7 +111,7 @@ public class WeatherServiceImple implements WeatherService {
         }
         weatherInfoDTO.setCountDroughtPeriods(periodsDrought);
         weatherInfoDTO.setCountSunnPeriods(periodsSun);
-        weatherInfoDTO.setMaxPeriodRain(periodRainy);
+        weatherInfoDTO.setCountPeriodsRainy(periodRainy);
         weatherInfoDTO.setDayMaxOfRainy(dayMax != null ? dayMax : 0);
 
         return weatherInfoDTO;
@@ -115,7 +119,6 @@ public class WeatherServiceImple implements WeatherService {
 
     @Override
     public Optional<Weather> getWeatherForDay(Long day) {
-        
         return weatherRepository.findById(day);
     }
 
@@ -129,10 +132,10 @@ public class WeatherServiceImple implements WeatherService {
         Integer i = 0;
         if(i + 3 <= planets.size() &&
                 planetService.planetsIsAling(planets.get(i),planets.get(i+1),planets.get(i+2))){
-            if(!planetService.plantesAlingWithSun(planets.get(i),planets.get(i+1),planets.get(i+2))){
-                return SUN;
-            }else{
+            if(planetService.plantesAlingWithSun(planets.get(i),planets.get(i+1),planets.get(i+2))){
                 return DROUGHT;
+            }else{
+                return SUN;
             }
         }else{
             if(i + 2 < planets.size() &&

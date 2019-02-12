@@ -1,6 +1,5 @@
 package com.examen.ingreso.meli.sistema.solar.entities;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -17,6 +16,10 @@ public class Weather implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long day;
+
+    @Column
+    private Integer dayOfPeriod;
+
     @Column(name ="WEATHER_TYPE")
     private String weatherType;
     @Column
